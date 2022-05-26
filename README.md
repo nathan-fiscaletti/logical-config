@@ -1,5 +1,11 @@
 # Logical Config
 
+[![Sponsor Me!](https://img.shields.io/badge/%F0%9F%92%B8-Sponsor%20Me!-blue)](https://github.com/sponsors/nathan-fiscaletti)
+[![Downloads](https://img.shields.io/npm/dw/logical-config)](https://www.npmjs.com/package/logical-config)
+[![GitHub stars](https://img.shields.io/github/stars/nathan-fiscaletti/logical-config)](https://github.com/nathan-fiscaletti/logical-config/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/nathan-fiscaletti/logical-config)](https://github.com/nathan-fiscaletti/logical-config/issues)
+[![GitHub license](https://img.shields.io/github/license/nathan-fiscaletti/logical-config)](https://github.com/nathan-fiscaletti/logical-config/blob/main/LICENSE)
+
 The logical-config Java Script package allows you, through a short-hand notation, to invoke functions directly from your configuration files at load-time and map configuration entries to variables, classes, or functions.
 
 ## Install
