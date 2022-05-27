@@ -33,7 +33,7 @@ $ yarn add logical-config
 `config.yaml`
 ```yaml
 Data:
-    Connection: "{database.getConnection}"
+  Connection: "{database.getConnection}"
 ```
 
 **Code**
