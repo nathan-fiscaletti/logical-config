@@ -103,7 +103,7 @@ You can attempt to parse a short-hand path object yourself using the `.parsePath
 const parsed = LogicalConfig.parsePathObject(`{user.setName;["Nathan"]}`);
 console.log(parsed);
 ```
-```
+```js
 { path: 'user.setName', parameters: [ 'Nathan' ], call: true }
 ```
 
