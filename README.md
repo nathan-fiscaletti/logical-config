@@ -33,7 +33,7 @@ $ yarn add logical-config
 `config.yaml`
 ```yaml
 Data:
-    Connection: "{data.getConnection}"
+    Connection: "{database.getConnection}"
 ```
 
 **Code**
@@ -43,14 +43,14 @@ const LogicalConfig = require('logical-config');
 const yaml = require('js-yaml');
 const fs   = require('fs');
 
-const config = await LogicalConfig.fill(
-    yaml.load(fs.readFileSync('./config.yaml', 'utf8')),
-    {
-        data: {
+const config = await LogicalConfig.fill({
+    input: yaml.load(fs.readFileSync('./config.yaml', 'utf8')),
+    data: {
+        database: {
             getConnection: async () => Promise.resolve({ connected: true })
         }
     }
-);
+});
 
 console.log(config);
 ```
@@ -120,24 +120,25 @@ In this example we:
 **Code**
 
 ```js
-const data = {
-    Number,
-    item: {
-        name: 'alcohol',
-        canBuy: age => age > 21,
-    },
-    user: {
-        getAgeAsStr: () => "27",
-    }
-};
-
 const canBuyAlcohol = await LogicalConfig.fill({
-    path: 'item.canBuy',
-    parameters: [{
-        path: 'Number',
-        parameters: ["{user.getAgeAsStr}"]
-    }]
-}, data);
+    input: {
+        path: 'item.canBuy',
+        parameters: [{
+            path: 'Number',
+            parameters: ["{user.getAgeAsStr}"]
+        }]
+    },
+    data: {
+        Number,
+        item: {
+            name: 'alcohol',
+            canBuy: age => age > 21,
+        },
+        user: {
+            getAgeAsStr: () => "27",
+        }
+    }
+});
 ```
 
 ### The `.fill()` function
