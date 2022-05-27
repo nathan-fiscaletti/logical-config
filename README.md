@@ -20,6 +20,7 @@ $ yarn add logical-config
 - [Documentation](#documentation)
   - [Path Objects](#path-objects)
     - [Short-hand](#path-object-short-hand)
+    - [Child Path Objects](#child-path-objects)
   - [The `.fill()` function](#the-fill-function)
 - [Advanced Examples](#advanced-examples)
   - [Retrieving Properties](#retrieving-properties)
@@ -35,7 +36,7 @@ Data:
     Connection: "{data.getConnection}"
 ```
 
-`test.js`
+**Code**
 ```js
 const LogicalConfig = require('logical-config');
 
@@ -54,7 +55,7 @@ const config = await LogicalConfig.fill(
 console.log(config);
 ```
 
-`output`
+**Output**
 ```js
 { Data: { Connection: { connected: true } } }
 ```
@@ -90,7 +91,7 @@ Each path object consists of three properties.
 - The `parameters` property should be a JSON encoded array.
 - At least the `path` property must be specified.
 
-The above example path object can be written in short hand like this:
+The above example path object can be written in short-hand like this:
 
 ```js
 "{user.isOlderThan;[18]}"
@@ -106,20 +107,54 @@ console.log(parsed);
 { path: 'user.setName', parameters: [ 'Nathan' ], call: true }
 ```
 
+#### Child Path Objects
+
+You can use Path Objects anywhere within the `parameters` array property of another Path Object. Please note however that **nested Path Objects are not supported in [short-hand path objects](#path-object-short-hand)**.
+
+In this example we:
+
+1. Retrieve the users age using `user.getAgeAsStr`. The return value of this function is a string.
+2. Retrieve the numeric value by sending the users age to the `funcs.toInt` Number function.
+3. Evaluate the expression by passing the users age to the `user.isOlderThan` function and returning the response.
+
+**Code**
+
+```js
+const data = {
+    Number,
+    item: {
+        name: 'alcohol',
+        canBuy: age => age > 21,
+    },
+    user: {
+        getAgeAsStr: () => "27",
+    }
+};
+
+const canBuyAlcohol = await LogicalConfig.fill({
+    path: 'item.canBuy',
+    parameters: [{
+        path: 'Number',
+        parameters: ["{user.getAgeAsStr}"]
+    }]
+}, data);
+```
+
 ### The `.fill()` function
 
 ```js
 const config = await LogicalConfig.fill(...
 ```
 
-The `.fill()` function takes an input object and a map of available pathings and will replace each instance of a [Path Object](#path-objects) with the value it describes. This will be performed on the input object recursively until all path objects have been parsed, at which point the finalized object will be returned.
+The `.fill()` function takes an input object and data object containing data that [Path Objects](#path-objects) can access. Itt will replace each instance of a Path Object with the value it describes from the datab object. This will be performed on the input object recursively until all path objects have been resolved, at which point the finalized object will be returned.
 
 **Parameters**
 
 |Parameter|Required|Description|
 |---|---|---|
 |input|Yes|The input object that will be parsed. Can be an array of [Path Objects](#path-objects), a single Path Object, or an object in which any value (at any depth) is either an array of Path Objects or a Path Object.|
-|map|Yes|An object representing the map to which path objects correspond.|
+|data|Yes|An object containing data to which path objects can correspond|
+|ignoredPaths|No|An array containing dot paths to keys in the input property that can be ignored when searching for Path Objects.|
 
 **Return**
 
@@ -132,10 +167,13 @@ The new object.
 1. **Retrieve a property from the map using short-hand**
 
    ```js
-   const res = await LogicalConfig.fill('{user.age}', {
-       user: {
-           age: 27
-       }
+   const res = await LogicalConfig.fill({
+      input: '{user.age}', 
+      data: {
+          user: {
+              age: 27
+          }
+      }
    });
    console.log(res); // Outputs: 27
    ```
@@ -145,9 +183,12 @@ The new object.
 1. **Call a function from the map using short-hand**
 
    ```js
-   const res = await LogicalConfig.fill('{user.getName}', {
-       user: {
-           getName: () => "Nathan"
+   const res = await LogicalConfig.fill({
+       input: '{user.getName}',
+       data: {
+           user: {
+               getName: () => "Nathan"
+           }
        }
    });
    console.log(res); // Outputs: "Nathan"
@@ -156,9 +197,12 @@ The new object.
 2. **Call a function with parameters from the map using short-hand**
 
    ```js
-   const res = await LogicalConfig.fill(`{user.info;[{"name":"Nathan"}, 27]}`, {
-       user: {
-           info: ({name}, age) => ({name, age})
+   const res = await LogicalConfig.fill({
+       input: `{user.info;[{"name":"Nathan"}, 27]}`,
+       data: {
+           user: {
+               info: ({name}, age) => ({name, age})
+           }
        }
    });
    console.log(res); // Outputs: { name: 'Nathan', age: 27 }
@@ -166,12 +210,15 @@ The new object.
 
 3. **Retrieve a function as a value from the map using short-hand**
 
-   By default, if a property is callable (is a class or a function), it will be invoked and it's return value will be used. You can override this by setting the `call` parameter of the [Path Object](#path-objects) to `false`.
+   By default, if a property is callable (is a class or a function), it will be invoked and it's return value will be used. You can override this by setting the `call` property of the [Path Object](#path-objects) to `false`.
 
    ```js
-   const res = await LogicalConfig.fill(`{user.info;;false}`, {
-       user: {
-           info: () => {}
+   const res = await LogicalConfig.fill({
+       input: `{user.info;;false}`,
+       data: {
+           user: {
+               info: () => {}
+           }
        }
    });
    console.log(res); // Outputs: [Function: info]
@@ -182,11 +229,14 @@ The new object.
 1. **Retrieve a new instance of a class from the map using short-hand**
 
    ```js
-   const res = await LogicalConfig.fill('{person.c}', {
-       person: {
-           c: class {
-               constructor() {
-                   this.name = "Nathan";
+   const res = await LogicalConfig.fill({
+       input: '{person.c}',
+       data: {
+           person: {
+               c: class {
+                   constructor() {
+                       this.name = "Nathan";
+                   }
                }
            }
        }
@@ -197,11 +247,14 @@ The new object.
 2. **Retrieve a new instance of a class with parameters from the map using short-hand**
 
    ```js
-   const res = await LogicalConfig.fill('{person.c;["Nathan"]}', {
-       person: {
-           c: class {
-               constructor(name) {
-                   this.name = name;
+   const res = await LogicalConfig.fill({
+       input: '{person.c;["Nathan"]}',
+       data: {
+           person: {
+               c: class {
+                   constructor(name) {
+                       this.name = name;
+                   }
                }
            }
        }
@@ -211,12 +264,15 @@ The new object.
 
 3. **Retrieve a class as a value from the map using short-hand.**
 
-   By default, if a property is callable (is a class or a function), it will be invoked and it's return value will be used. You can override this by setting the `call` parameter of the [Path Object](#path-objects) to `false`.
+   By default, if a property is callable (is a class or a function), it will be invoked and it's return value will be used. You can override this by setting the `call` property of the [Path Object](#path-objects) to `false`.
 
    ```js
-   const res = await LogicalConfig.fill('{person.c;;false}', {
-       person: {
-           c: class {}
+   const res = await LogicalConfig.fill({
+       input:'{person.c;;false}',
+       data: {
+           person: {
+               c: class {}
+           }
        }
    });
    console.log(res); // Outputs: [class c]
