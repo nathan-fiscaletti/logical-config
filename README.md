@@ -74,14 +74,14 @@ Each path object consists of three properties.
 
 |Property|Required|Default|Description|
 |---|---|---|---|
-|path|Yes|`undefined`|The dot path at which the desired value can be found in the map.|
-|parameters|No|`[]`|When the value found at the specified path is callable, and the `call` property is enabled, this is a list of parameters that will be passed to it.|
-|call|No|`true`|If the value found at the specified path is callable, this boolean indicates if the response of calling that value should be used, or the value itself.|
+|`$fill`|Yes|`undefined`|The dot path at which the desired value can be found in the map.|
+|`parameters`|No|`[]`|When the value found at the specified path is callable, and the `call` property is enabled, this is a list of parameters that will be passed to it.|
+|`call`|No|`true`|If the value found at the specified path is callable, this boolean indicates if the response of calling that value should be used, or the value itself.|
 
 **Example Path Object**
 ```js
 {
-    path: 'user.isOlderThan',
+    '$fill': 'user.isOlderThan',
     parameters: [ 18 ],
     call: true
 }
@@ -91,9 +91,9 @@ Each path object consists of three properties.
 
 - Short-hand path objects should be written as strings and wrapped with `{}`.
 - Each property should be dilmited with a semi-colon `;`.
-- The properties should be listed in the order of (`path`, `parameters`, `call`).
+- The properties should be listed in the order of (`$fill`, `parameters`, `call`).
 - The `parameters` property should be a JSON encoded array.
-- At least the `path` property must be specified.
+- At least the `$fill` property must be specified.
 
 The above example path object can be written in short-hand like this:
 
@@ -104,11 +104,11 @@ The above example path object can be written in short-hand like this:
 You can attempt to parse a short-hand path object yourself using the `.parsePathObject()` function.
 
 ```js
-const parsed = LogicalConfig.parsePathObject(`{user.setName;["Nathan"]}`);
+const parsed = LogicalConfig.parsePathObject(`{user.setName;["Nathan"];true}`);
 console.log(parsed);
 ```
 ```js
-{ path: 'user.setName', parameters: [ 'Nathan' ], call: true }
+{ '$fill': 'user.setName', parameters: [ 'Nathan' ], call: true }
 ```
 
 #### Child Path Objects
@@ -126,9 +126,9 @@ In this example we:
 ```js
 const canBuyAlcohol = await LogicalConfig.fill({
     input: {
-        path: 'item.canBuy',
+        '$fill': 'item.canBuy',
         parameters: [{
-            path: 'Number',
+            '$fill': 'Number',
             parameters: ["{user.getAgeAsStr}"]
         }]
     },
@@ -157,9 +157,9 @@ The `.fill()` function takes an input object and data object containing data tha
 
 |Parameter|Required|Description|
 |---|---|---|
-|input|Yes|The input object that will be parsed. Can be an array of [Path Objects](#path-objects), a single Path Object, or an object in which any value (at any depth) is either an array of Path Objects or a Path Object.|
-|data|Yes|An object containing data to which path objects can correspond|
-|ignoredPaths|No|An array containing dot paths to keys in the input property that can be ignored when searching for Path Objects.|
+|`input`|Yes|The input object that will be parsed. Can be an array of [Path Objects](#path-objects), a single Path Object, or an object in which any value (at any depth) is either an array of Path Objects or a Path Object.|
+|`data`|Yes|An object containing data to which path objects can correspond|
+|`ignoredPaths`|No|An array containing dot paths to keys in the input property that can be ignored when searching for Path Objects.|
 
 **Return**
 

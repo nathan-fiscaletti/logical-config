@@ -52,8 +52,8 @@ const isShortHand = obj => (
  */
 const isValidPathObject = obj => (
     obj
-    && obj.path 
-    && typeof obj.path === 'string'
+    && obj['$fill'] 
+    && typeof obj['$fill'] === 'string'
     && (
         typeof obj.call === 'boolean' 
         || obj.call == undefined
@@ -90,7 +90,7 @@ const parsePathObject = obj => {
             : undefined;
 
         result = {
-            path,
+            '$fill': path,
             parameters,
             call: ['true', 'false'].includes(call) ? call === 'true' : undefined
         };
@@ -119,12 +119,12 @@ const getDef = (obj, def = true) => obj === undefined ? def : obj;
  */
 const pathObjectExpressesSymbol = (obj, resolved) => {
     if(resolved === undefined) {
-        throw new Error(`Referenced path '${obj.path || obj}' is not accessble.`);
+        throw new Error(`Referenced path '${obj['$fill'] || obj}' is not accessble.`);
     }
 
     if (!isCallable(resolved) && getDef(obj.call, false)) {
         throw new Error(
-            `Referencing '${obj.path || obj}' with 'call' enabled, ` +
+            `Referencing '${obj['$fill'] || obj}' with 'call' enabled, ` +
             `but referenced path is not callable.`
         );
     }
@@ -140,7 +140,7 @@ const pathObjectExpressesSymbol = (obj, resolved) => {
 
         if (getDef(obj.call, true) && providedLength !== requiredLength) {
             throw new Error(
-                `Referencing '${obj.path || obj}' but an invalid number of ` + 
+                `Referencing '${obj['$fill'] || obj}' but an invalid number of ` + 
                 `parameters was passed to it. (provided ${providedLength}, ` + 
                 `required ${requiredLength})`
             );
@@ -224,7 +224,7 @@ const fill = async ({
     }
 
     const parsed = parsePathObject(input);
-    const pathPointsTo = tryResolveDotPath(parsed.path, data);
+    const pathPointsTo = tryResolveDotPath(parsed['$fill'], data);
     const {
         isReferenceable: _isDataReferenceable,
         getReference: _getDataReference
@@ -266,7 +266,7 @@ const fill = async ({
             currentPath.push(k);
             if (!ignoredPaths.includes(currentPath.join('.'))) {
                 const parsed = parsePathObject(v);
-                const pathPointsTo = tryResolveDotPath(parsed.path || v, data);
+                const pathPointsTo = tryResolveDotPath(parsed['$fill'] || v, data);
                 const {
                     isReferenceable: _isItemReferenceable,
                     getReference: _getItemReference
