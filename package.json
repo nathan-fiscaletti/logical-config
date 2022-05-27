@@ -1,6 +1,6 @@
 {
   "name": "logical-config",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Allows you, through a short-hand notation, to invoke functions directly from your configuration files at load-time and map configuration entries to variables, classes, or functions.",
   "main": "index.js",
   "scripts": {
