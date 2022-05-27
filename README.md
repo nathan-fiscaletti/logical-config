@@ -6,7 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/nathan-fiscaletti/logical-config)](https://github.com/nathan-fiscaletti/logical-config/issues)
 [![GitHub license](https://img.shields.io/github/license/nathan-fiscaletti/logical-config)](https://github.com/nathan-fiscaletti/logical-config/blob/main/LICENSE)
 
-The logical-config Java Script package allows you, through a short-hand notation, to invoke functions directly from your configuration files at load-time and map configuration entries to variables, classes, or functions.
+The logical-config JavaScript package allows you, through short-hand notation, to invoke functions directly from your configuration files at load-time and map configuration entries to variables, classes, or functions.
 
 ## Install
 
