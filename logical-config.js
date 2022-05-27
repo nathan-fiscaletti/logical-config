@@ -113,7 +113,7 @@ const fill = async (input, map) => {
     }
 
     if (Array.isArray(input)) {
-        return await Promise.all(data.map(async e => await fill(e, map)));
+        return await Promise.all(input.map(async e => await fill(e, map)));
     }
 
     return Object.fromEntries(
