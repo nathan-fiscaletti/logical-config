@@ -25,7 +25,7 @@ $ yarn add logical-config
   - [Retrieving Properties](#retrieving-properties)
   - [Using Functions](#using-functions)
   - [Using Classes](#using-classes)
-  - [Practical Example](#practical-example)
+  - [Winston Logical Config](#winston-logical-config)
 
 ## Simple Example
 
@@ -222,50 +222,6 @@ The new object.
    console.log(res); // Outputs: [class c]
    ```
 
-### Practical Example
+### Winston Logical Config
 
-```js
-res = await LogicalConfig.fill(
-    // This is the input from the config file
-    {
-        type: 'user',
-        name: '{user.name}',
-        age: {
-            path: 'user.getAge'
-        },
-        sports: {
-            top_2: {
-                path: 'user.sports.getFavorites',
-                parameters: [
-                    2
-                ]
-            }
-        },
-        title: `{user.getTitle;["myprefix"]}`,
-        orderPizza: '{user.orderPizza;;false}'
-    },
-
-    // This is the mappings that it can access through the short-hand
-    // and path objects.
-    {
-        user: {
-            name: 'Nathan',
-            getAge: async () => Promise.resolve(27),
-            sports: {
-                getFavorites: count => Array(count).fill('baseball')
-            },
-            getTitle: prefix => `${prefix}_title`,
-            orderPizza: (...toppings) => [ 'cheese', ...toppings ]
-        }
-    }
-);
-console.log(res);
-/* Outputs: {
-    type: 'user',
-    name: 'Nathan',
-    age: 27,
-    sports: { top_2: [ 'baseball', 'baseball' ] },
-    title: 'myprefix_title',
-    orderPizza: [Function: orderPizza]
-} */
-```
+See [Winston Logical Config](https://github.com/nathan-fiscaletti/winston-logical-config) for a practical example.
