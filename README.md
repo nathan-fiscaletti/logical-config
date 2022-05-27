@@ -28,6 +28,10 @@ $ yarn add logical-config
   - [Using Classes](#using-classes)
   - [Winston Logical Config](#winston-logical-config)
 
+## Practical Example
+
+See [Winston Logical Config](https://github.com/nathan-fiscaletti/winston-logical-config) for a practical example of using a Logical Config file.
+
 ## Simple Example
 
 `config.yaml`
@@ -278,7 +282,3 @@ The new object.
    });
    console.log(res); // Outputs: [class c]
    ```
-
-### Winston Logical Config
-
-See [Winston Logical Config](https://github.com/nathan-fiscaletti/winston-logical-config) for a practical example.
