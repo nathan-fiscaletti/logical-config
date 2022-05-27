@@ -16,6 +16,7 @@ $ yarn add logical-config
 
 ## Index
 
+- [Practical Example](#practical-example)
 - [Simple Example](#simple-example)
 - [Documentation](#documentation)
   - [Path Objects](#path-objects)
@@ -26,11 +27,10 @@ $ yarn add logical-config
   - [Retrieving Properties](#retrieving-properties)
   - [Using Functions](#using-functions)
   - [Using Classes](#using-classes)
-  - [Winston Logical Config](#winston-logical-config)
 
 ## Practical Example
 
-See [Winston Logical Config](https://github.com/nathan-fiscaletti/winston-logical-config) for a practical example of using a Logical Config file.
+See [Winston Logical Config](https://github.com/nathan-fiscaletti/winston-logical-config) for a practical example of using a Logical Config file. Winston Logical Config allows you to configure a [Winston](https://github.com/winstonjs/winston) logger directly from a config file.
 
 ## Simple Example
 
